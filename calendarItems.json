@@ -1,0 +1,30 @@
+{
+  "calendarItems": [
+    {
+      "date": "2023-07-18",
+      "meals": [
+        {
+          "type": "dinner",
+          "items": [
+            "salmon",
+            "wild rice",
+            "veggies"
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2023-07-19",
+      "meals": [
+        {
+          "type": "dinner",
+          "items": [
+            "portebello ravioli",
+            "spicy meatless meat",
+            "tomato basil sauce"
+          ]
+        }
+      ]
+    }
+  ]
+}
