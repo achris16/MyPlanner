@@ -1,5 +1,5 @@
 import './App.css';
-import Register from './components/Register';
+import LogIn from './components/LogIn';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 function App() {
@@ -8,7 +8,7 @@ function App() {
       <div className="App">
         <div className="container">
           <Routes>
-            <Route path="/" element={<Register/>} />
+            <Route path="/" element={<LogIn/>} />
           </Routes>
         </div> 
       </div>
