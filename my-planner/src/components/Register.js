@@ -12,7 +12,6 @@ import Container from '@mui/material/Container';
 import axios from 'axios';
 import { evalErrorResponse } from '../utils/httpUtils';
 
-
 function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
@@ -26,21 +25,24 @@ function Copyright(props) {
   );
 }
 
-export default function LogIn() {
+
+
+export default function Register() {
   const [errors, setErrors] = useState({});
 
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     let user = {
+      username: data.get('username'),
       email: data.get('email'),
       password: data.get('password'),
     };
     // @TODO: User yup userSchema.validate()
     // https://github.com/jquense/yup
-    axios.post('http://127.0.0.1:5000/api/v1/auth/login', { 'user': user })
+    axios.post('http://127.0.0.1:5000/api/v1/auth/register', { 'user': user })
       .then(resp => {
-        console.log(resp.data.token);
+        console.log(resp.data);
         setErrors({});
       })
       .catch(err => {
@@ -61,61 +63,66 @@ export default function LogIn() {
         }}
       >
         <Typography component="h1" variant="h5">
-          Sign in
+          Sign up
         </Typography>
-        {/* @TODO: Include formik https://formik.org/docs/tutorial */}
-        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-          <TextField
-            error={errors && errors.email ? true : false}
-            helperText={errors && errors.email ? errors.email : ''}
-            margin="normal"
-            required
-            fullWidth
-            id="email"
-            label="Email Address"
-            name="email"
-            autoComplete="email"
-            autoFocus
-          />
-          <TextField
-            error={errors && errors.password ? true : false}
-            helperText={errors && errors.password ? errors.password : ''}
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label="Password"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-          />
-          <FormControlLabel
-            control={<Checkbox value="remember" color="primary" />}
-            label="Remember me"
-          />
+        <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <TextField
+                error={errors && errors.username ? true : false}
+                helperText={errors && errors.username ? errors.username : ''}
+                margin="normal"
+                required
+                fullWidth
+                id="username"
+                label="Username"
+                name="username"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                error={errors && errors.email ? true : false}
+                helperText={errors && errors.email ? errors.email : ''}
+                margin="normal"
+                required
+                fullWidth
+                id="email"
+                label="Email Address"
+                name="email"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                error={errors && errors.password ? true : false}
+                helperText={errors && errors.password ? errors.password : ''}
+                margin="normal"
+                required
+                fullWidth
+                name="password"
+                label="Password"
+                type="password"
+                id="password"
+              />
+            </Grid>
+          </Grid>
           <Button
             type="submit"
             fullWidth
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
           >
-            Sign In
+            Sign Up
           </Button>
-          <Grid container>
-            <Grid item xs>
-              <Link href="#" variant="body2">
-                Forgot password?
-              </Link>
-            </Grid>
+          <Grid container justifyContent="flex-end">
             <Grid item>
-              <Link component={RouterLink} to="/register" variant="body2">
-                {"Don't have an account? Sign Up"}
+              <Link component={RouterLink} to="/" variant="body2">
+                {"Already have an account? Sign in"}
               </Link>
             </Grid>
           </Grid>
         </Box>
       </Box>
-      <Copyright sx={{ mt: 8, mb: 4 }} />
+      <Copyright sx={{ mt: 5 }} />
     </Container>
   );
 }
