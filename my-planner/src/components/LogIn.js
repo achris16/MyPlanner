@@ -9,7 +9,6 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import axios from 'axios';
 import { evalErrorResponse } from '../utils/httpUtils';
 
 
@@ -26,27 +25,21 @@ function Copyright(props) {
   );
 }
 
-export default function LogIn() {
+export default function LogIn(props) {
   const [errors, setErrors] = useState({});
 
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    let user = {
+    
+    const user = {
       email: data.get('email'),
       password: data.get('password'),
     };
-    // @TODO: User yup userSchema.validate()
-    // https://github.com/jquense/yup
-    axios.post('http://127.0.0.1:5000/api/v1/auth/login', { 'user': user })
-      .then(resp => {
-        console.log(resp.data.token);
-        setErrors({});
-      })
+
+    props.makeAxiosRequest('post', 'http://127.0.0.1:5000/api/v1/auth/login', null, null, { user })
       .catch(err => {
-        // console.log(err.response.status);
         setErrors(evalErrorResponse(err.response.data));
-        // console.log(errors);
       });
   };
 
