@@ -3,7 +3,23 @@ import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
 import { evalErrorResponse } from '../utils/httpUtils';
 import moment from 'moment';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import Modal from '@mui/material/Modal';
+import GroceriesForm from './GroceriesForm';
 
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: '80vw',
+  maxHeight: '80vh',
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
 
 const columns = [
   { 
@@ -54,17 +70,22 @@ export default function Groceries(props) {
   const [params, setParams] = useState({});
   const [errors, setErrors] = useState({});
   
-  console.log(groceries);
-  useEffect(() => {
+  const requestGroceries = () => {
     props.makeAxiosRequest('get', 'http://127.0.0.1:5000/api/v1/MyPlanner/data/groceries', {'X-AUTH': props.authToken}, params, null)
-      .then(resp => {
-        console.log(resp.data);
-        setGroceries(resp.data.groceries);
-      })
-      .catch(err => {
-        setErrors(evalErrorResponse(err.response.data));
-      });
-  }, []);
+    .then(resp => {
+      console.log(resp.data);
+      setGroceries(resp.data.groceries);
+    })
+    .catch(err => {
+      setErrors(evalErrorResponse(err.response.data));
+    });
+  }
+
+  useEffect(() => {requestGroceries()}, []);
+
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   return (
     <div>
@@ -85,6 +106,22 @@ export default function Groceries(props) {
           disableRowSelectionOnClick
         />
       </Box>
+      <Button onClick={handleOpen}>Create Groceries</Button>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}> 
+          <GroceriesForm 
+            authToken={props.authToken}
+            makeAxiosRequest={props.makeAxiosRequest}
+            handleClose={handleClose}
+            requestGroceries={requestGroceries}
+          />
+        </Box>
+      </Modal>
     </div>
   )
 }
