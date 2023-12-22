@@ -14,30 +14,57 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import Container from '@mui/material/Container';
 import { evalErrorResponse } from '../utils/httpUtils';
+import moment from 'moment';
 
+function formatDate(dateStr, formatStr='YYYY-MM-DD HH:mm:ss') {
+  const newDate = moment(dateStr).format(formatStr);
+  console.log(newDate);
+  console.log(newDate.indexOf('Invalid date'));
+  return newDate.indexOf('Invalid date') !== -1 ? '' : newDate;
+}
 
-export default function GroceriesForm() {
+export default function GroceriesForm(props) {
   const [errors, setErrors] = useState({});
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log(event);
     const data = new FormData(event.currentTarget);
-    console.log(data);
-
     const groceryData = {
       name: data.get('name'),
-      totalPrice: data.get('totalPrice'),
-      boughtDate: data.get('boughtDate'),
+      total_price: data.get('totalPrice'),
+      bought_date: formatDate(data.get('boughtDate')),
       description: data.get('description'),
-      store: data.get('store'),
-      expiryDate: data.get('expiryDate'),
-      openDate: data.get('openDate'),
-      finishDate: data.get('finishDate'),
-      unitPrice: data.get('unitPrice'),
-      weight: data.get('weight'),
     };
-    console.log(groceryData);
+
+    if (data.get('store') !== '') {
+      groceryData['store'] = data.get('store');
+    }
+    if (formatDate(data.get('expiryDate')) !== '') {
+      groceryData['expiry_date'] = formatDate(data.get('expiryDate'));
+    }
+    if (formatDate(data.get('openDate')) !== '') {
+      groceryData['open_date'] = formatDate(data.get('openDate'));
+    }
+    if (formatDate(data.get('finishDate')) !== '') {
+      groceryData['finish_date'] = formatDate(data.get('finishDate'));
+    }
+    if (data.get('unitPrice') !== '') {
+      groceryData['unit_price'] = data.get('unitPrice');
+    }
+    if (data.get('weight') !== '') {
+      groceryData['weight'] = data.get('weight');
+    }
+
+    props.makeAxiosRequest('post', 'http://127.0.0.1:5000/api/v1/MyPlanner/data/groceries', {'X-AUTH': props.authToken}, null, { groceries: [ groceryData ] })
+    .then(resp => {
+        console.log(resp.data);
+        props.requestGroceries();
+        props.handleClose();
+      })
+    .catch(err => {
+      console.log(err);
+      setErrors(evalErrorResponse(err.response.data));
+    });
   };
 
   return (
@@ -51,7 +78,6 @@ export default function GroceriesForm() {
       <Typography variant="h6" component="h2">
         Groceries Form
       </Typography>
-      {/* @TODO: Include formik https://formik.org/docs/tutorial */}
       <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
         <Box sx={{ height: '400px', overflow: 'scroll' }}>
           <TextField

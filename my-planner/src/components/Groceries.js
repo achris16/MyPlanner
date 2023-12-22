@@ -70,17 +70,18 @@ export default function Groceries(props) {
   const [params, setParams] = useState({});
   const [errors, setErrors] = useState({});
   
-  console.log(groceries);
-  useEffect(() => {
+  const requestGroceries = () => {
     props.makeAxiosRequest('get', 'http://127.0.0.1:5000/api/v1/MyPlanner/data/groceries', {'X-AUTH': props.authToken}, params, null)
-      .then(resp => {
-        console.log(resp.data);
-        setGroceries(resp.data.groceries);
-      })
-      .catch(err => {
-        setErrors(evalErrorResponse(err.response.data));
-      });
-  }, []);
+    .then(resp => {
+      console.log(resp.data);
+      setGroceries(resp.data.groceries);
+    })
+    .catch(err => {
+      setErrors(evalErrorResponse(err.response.data));
+    });
+  }
+
+  useEffect(() => {requestGroceries()}, []);
 
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -113,7 +114,12 @@ export default function Groceries(props) {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}> 
-          <GroceriesForm />
+          <GroceriesForm 
+            authToken={props.authToken}
+            makeAxiosRequest={props.makeAxiosRequest}
+            handleClose={handleClose}
+            requestGroceries={requestGroceries}
+          />
         </Box>
       </Modal>
     </div>

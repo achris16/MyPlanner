@@ -6,23 +6,27 @@ import LogIn from './components/LogIn';
 import Register from './components/Register';
 import Groceries from './components/Groceries';
 
-// @TODO: Save AuthToken in local storage.
 function App() {
-  const [authToken, setAuthToken] = useState('');
-
+  const [authToken, setAuthToken] = useState(localStorage.getItem('authToken') || '');
+  
   function makeAxiosRequest(method, url, headers, params, data) {
     // console.log(method, url, headers, params, data);
     return axios({method, url, headers, params, data})
-      .then(resp => {
+    .then(resp => {
+        console.log(resp);
         if (resp.data && resp.data.token) {
+          localStorage.setItem('authToken', resp.data.token);
           setAuthToken(resp.data.token);
         }
-        console.log(resp);
         return resp;
       })
       .catch(err => {
         console.log(err);
-        // @TODO: Handle 401 response token expiration
+        if (err.response.status === 401) {
+          console.log(err.response.status);
+          localStorage.setItem('authToken', '');
+          setAuthToken(''); 
+        }
         throw err;
       });
   }
