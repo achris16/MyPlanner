@@ -9,6 +9,7 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import Alert from '@mui/material/Alert';
 import { evalErrorResponse } from '../utils/httpUtils';
 
 
@@ -53,6 +54,9 @@ export default function LogIn(props) {
           alignItems: 'center',
         }}
       >
+        {errors && errors.message && <Alert severity="error" onClose={() => { setErrors({}) }} sx={{marginBottom: 4}}>
+          {errors.message}
+        </Alert>}
         <Typography component="h1" variant="h5">
           Sign in
         </Typography>
@@ -60,7 +64,7 @@ export default function LogIn(props) {
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
           <TextField
             error={errors && errors.email ? true : false}
-            helperText={errors && errors.email ? errors.email : ''}
+            helperText={errors && errors.email ? errors.email.join(' ') : ''}
             margin="normal"
             required
             fullWidth
@@ -72,7 +76,7 @@ export default function LogIn(props) {
           />
           <TextField
             error={errors && errors.password ? true : false}
-            helperText={errors && errors.password ? errors.password : ''}
+            helperText={errors && errors.password ? errors.password.join(' ') : ''}
             margin="normal"
             required
             fullWidth
